@@ -1,0 +1,7 @@
+h1. mem_self_register
+
+Original code by "Michael Manfre":http://manfre.net
+
+Released under the GPLv2.
+
+This is a plugin for "textpattern":http:/textpattern.com
