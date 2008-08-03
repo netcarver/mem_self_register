@@ -310,7 +310,7 @@ $mem_self = array(
 				'new_user_priv'		=>	'0',
 				'status'			=>	false,
 				'status_message'	=>	'You are already registered.',
-				'email_message'		=>	''				
+				'email_message'		=>	''
 			);
 
 $mem_self['admin_email'] = isset($prefs['mem_self_admin_email']) ? $prefs['mem_self_admin_email'] : '';
