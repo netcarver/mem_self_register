@@ -192,12 +192,12 @@ if( !is_array($mem_user_cfs))
 	$mem_user_cfs = array(
 		#var_name	=> spec,		# REMEMBER TO ADD 'cf_<var_name>' to the $mem_self_lang array!
 		'registered' => "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'",
-		'website' => 'VARCHAR(128)',
-		'phone' => 'VARCHAR(32)',
-		'fax' => 'VARCHAR(32)',
-		'iso' => 'VARCHAR(8)',
-		'vat' => 'VARCHAR(32)',
-		'notes'=> 'TEXT',
+		'website' => "VARCHAR(128) NOT NULL DEFAULT ''",
+		'phone' => "VARCHAR(32) NOT NULL DEFAULT ''",
+		'fax' => "VARCHAR(32) NOT NULL DEFAULT ''",
+		'iso' => "VARCHAR(8) NOT NULL DEFAULT ''",
+		'vat' => "VARCHAR(32) NOT NULL DEFAULT ''",
+		'notes'=> "TEXT NOT NULL DEFAULT ''",
 	);
 }
 
