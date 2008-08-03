@@ -191,7 +191,8 @@ if( !is_array($mem_user_cfs))
 {
 	$mem_user_cfs = array(
 		#var_name	=> spec,		# REMEMBER TO ADD 'cf_<var_name>' to the $mem_self_lang array!
-		'registered' => 'DATE',
+		'registered' => "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'",
+		'website' => 'VARCHAR(128)',
 		'phone' => 'VARCHAR(32)',
 		'fax' => 'VARCHAR(32)',
 		'iso' => 'VARCHAR(8)',
@@ -207,6 +208,7 @@ if (!is_array($mem_self_lang))
 	$mem_self_lang = array(
 		# Display strings for extra fields...
 		'cf_registered' => 'Registered on',
+		'cf_website' => 'Website',
 		'cf_phone' => 'Phone',
 		'cf_fax' => 'Fax',
 		'cf_iso' => 'Country',
@@ -215,6 +217,7 @@ if (!is_array($mem_self_lang))
 		#'cf_' => '',
 		
 		'account_created_mail_failed'	=>	'Your account has been created, but an error was encountered while attempting to email your the account information. Please contact the site administrator for help.',
+		'add_custom_fields'	=>	'Add the following fields&#8230;',
 		'admin_name'		=>	'Admin Name',
 		'admin_email'		=>	'Admin Email',
 		'error_adding_new_author'	=>	'Error adding new author',
@@ -380,15 +383,15 @@ if ( @txpinterface == 'admin' ) {
 			}
 			
 			$xtra_columns = mem_get_extra_user_columns();
-			$extra_html = array();
+			$extra_html[] = tr( fLabelCell( mem_self_gTxt('add_custom_fields')) . tda('') );
 			foreach( $mem_user_cfs as $field=>$spec ) {
-				$exits = in_array($field,$xtra_columns);
+				$exists = in_array($field,$xtra_columns);
 				if(!$exists) {
 					$add_yn = yesnoradio('add_'.$field,'0');
-					$extra_html = tr( fLabelCell( mem_self_gTxt('cf_'.$field) ) . tda($add_yn) ) );
+					$extra_html[] = tr( fLabelCell( mem_self_gTxt('cf_'.$field) ) . tda($add_yn) );
 				}
 			}
-			$extra_html = join(n,$extra_html);
+			$extra_html = join('',$extra_html);
 			
 			echo form(
 				eInput('self-reg').sInput('install').
@@ -439,7 +442,7 @@ if ( @txpinterface == 'admin' ) {
 		$xtra_columns = mem_get_extra_user_columns();
 		
 		foreach( $mem_user_cfs as $field=>$spec ) {
-			$exits = gps('add_'.$field);
+			$exists = gps('add_'.$field);
 			if($exists) {
 				if (!in_array($field,$xtra_columns)) {
 					if (safe_alter($user_table,"ADD `$field` $spec")) {
@@ -481,7 +484,7 @@ if ( @txpinterface == 'admin' ) {
 		} else {
 			safe_update('txp_prefs',"html='priv_levels'","name='mem_self_new_user_priv'");
 			
-			$log[] = mem_self_gTxt('log_pref_exists', array('{name}'=>'mem_self_new_user_priv','{value}' => $rs));
+			$log[] = @mem_self_gTxt('log_pref_exists', array('{name}'=>'mem_self_new_user_priv','{value}' => $rs));	# is this line causing a notice?
 		}
 
 		// create default registration form
