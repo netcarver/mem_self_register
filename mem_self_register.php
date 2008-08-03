@@ -185,11 +185,35 @@ p. Example for logged in user
 ////////////////////////////////////////////////////////////
 require_plugin('mem_form');
 
+// Per-User custom fields
+global $mem_user_cfs;
+if( !is_array($mem_user_cfs))
+{
+	$mem_user_cfs = array(
+		#var_name	=> spec,		# REMEMBER TO ADD 'cf_<var_name>' to the $mem_self_lang array!
+		'registered' => 'DATE',
+		'phone' => 'VARCHAR(32)',
+		'fax' => 'VARCHAR(32)',
+		'iso' => 'VARCHAR(8)',
+		'vat' => 'VARCHAR(32)',
+		'notes'=> 'TEXT',
+	);
+}
+
 // MLP
 global $mem_self_lang;
 if (!is_array($mem_self_lang))
 {
 	$mem_self_lang = array(
+		# Display strings for extra fields...
+		'cf_registered' => 'Registered on',
+		'cf_phone' => 'Phone',
+		'cf_fax' => 'Fax',
+		'cf_iso' => 'Country',
+		'cf_vat' => 'VAT Number',
+		'cf_notes' => 'Notes',
+		#'cf_' => '',
+		
 		'account_created_mail_failed'	=>	'Your account has been created, but an error was encountered while attempting to email your the account information. Please contact the site administrator for help.',
 		'admin_name'		=>	'Admin Name',
 		'admin_email'		=>	'Admin Email',
@@ -330,7 +354,7 @@ if ( @txpinterface == 'admin' ) {
 	
 	function mem_self_register($event, $step) 
 	{
-		global $prefs;
+		global $prefs , $mem_user_cfs;
 		
 		extract($prefs);
 	
@@ -356,11 +380,15 @@ if ( @txpinterface == 'admin' ) {
 			}
 			
 			$xtra_columns = mem_get_extra_user_columns();
-			$has_address = in_array('address',$xtra_columns);
-			$has_phone = in_array('phone',$xtra_columns);
-			
-			$add_address_input = yesnoradio('add_address','0');
-			$add_phone_input = yesnoradio('add_phone','0');
+			$extra_html = array();
+			foreach( $mem_user_cfs as $field=>$spec ) {
+				$exits = in_array($field,$xtra_columns);
+				if(!$exists) {
+					$add_yn = yesnoradio('add_'.$field,'0');
+					$extra_html = tr( fLabelCell( mem_self_gTxt('cf_'.$field) ) . tda($add_yn) ) );
+				}
+			}
+			$extra_html = join(n,$extra_html);
 			
 			echo form(
 				eInput('self-reg').sInput('install').
@@ -369,8 +397,7 @@ if ( @txpinterface == 'admin' ) {
 					tr( fLabelCell('admin_email')	. tda(fInput('text','admin_email',$mem_admin_email,'edit')) ) .
 					tr( fLabelCell('new_user_priv')	. tda(priv_levels('new_user_priv',$mem_new_use_priv)) ) .
 					tr( fLabelCell('use_ign_db')	. tda($use_ign_input) ) .
-					($has_address ? '' : tr( fLabelCell('add_address_field') . tda($add_address_input) ) ) .
-					($has_phone ? '' : tr( fLabelCell('add_phone_field') . tda($add_phone_input) ) ) .
+					$extra_html .
 					tr( td() . td( fInput("submit", 'submit',mem_self_gTxt('install'),"Publish"), 2 ) ) .
 				endTable()
 				);
@@ -378,19 +405,16 @@ if ( @txpinterface == 'admin' ) {
 			echo '<div><a href="?event=self-reg&step=preinstall">'.mem_self_gTxt('install').'</a></div>';
 		}
 	}
-	
 
 	function mem_self_register_install() 
 	{
-		global $mem_self;
+		global $mem_self , $mem_user_cfs;
 
 		extract(doSlash(gpsa(array(
 			'admin_email',
 			'admin_name',
 			'new_user_priv',
 			'use_ign_db',
-			'add_address',
-			'add_phone'
 		))));
 
 		if (!isset($new_user_priv) || empty($new_user_priv)) $new_user_priv = '0';
@@ -413,26 +437,19 @@ if ( @txpinterface == 'admin' ) {
 		$user_table = mem_get_user_table_name();
 		
 		$xtra_columns = mem_get_extra_user_columns();
-		if ($add_address) {
-			if (!in_array('address',$xtra_columns)) {
-				if (safe_alter($user_table,"ADD `address` VARCHAR( 128 )")) {
-					$log[] = mem_self_gTxt('log_col_added', array('{name}'=>'address','{table}'=>$user_table));
+		
+		foreach( $mem_user_cfs as $field=>$spec ) {
+			$exits = gps('add_'.$field);
+			if($exists) {
+				if (!in_array($field,$xtra_columns)) {
+					if (safe_alter($user_table,"ADD `$field` $spec")) {
+						$log[] = mem_self_gTxt('log_col_added', array('{name}'=>$field,'{table}'=>$user_table));
+					} else {
+						$log[] = mem_self_gTxt('log_col_failed', array('{name}'=>$field,'{table}'=>$user_table,'{error}'=>mysql_error()));
+					}
 				} else {
-					$log[] = mem_self_gTxt('log_col_failed', array('{name}'=>'address','{table}'=>$user_table,'{error}'=>mysql_error()));
+					$log[] = mem_self_gTxt('log_col_exists', array('{name}'=>$field,'{table}'=>$user_table));
 				}
-			} else {
-				$log[] = mem_self_gTxt('log_col_exists', array('{name}'=>'address','{table}'=>$user_table));
-			}
-		}
-		if ($add_phone) {
-			if (!in_array('phone',$xtra_columns)) {
-				if (safe_alter($user_table,"ADD `phone` VARCHAR( 32 )")) {
-					$log[] = mem_self_gTxt('log_col_added', array('{name}'=>'phone','{table}'=>$user_table));
-				} else {
-					$log[] = mem_self_gTxt('log_col_failed', array('{name}'=>'phone','{table}'=>$user_table,'{error}'=>mysql_error()));
-				}
-			} else {
-				$log[] = mem_self_gTxt('log_col_exists', array('{name}'=>'phone','{table}'=>$user_table));
 			}
 		}
 
