@@ -636,6 +636,8 @@ function mem_self_register_form_submit()
 
 		if (isset($mem_form_values[$c_name]))
 			$mem_profile[$c_name] = $mem_form_values[$c_name];
+		elseif ($c_name==='registered')
+			$mem_profile[$c_name] = $_POST['registered'] = 'now()';
 	}
 	
 	$rs = false;
@@ -757,10 +759,12 @@ function mem_get_extra_user_columns_insert_string() {
 			$xtra .= ", {$name}=" . ($val == false ? '0' : doSlash($val));	
 		} else {
 			// quote value
-			$xtra .= ", {$name}='" . doSlash($val) ."'";
+			if('now()'===$val)
+				$xtra .= ", {$name}=" . doSlash($val);
+			else
+				$xtra .= ", {$name}='" . doSlash($val) ."'";
 		}
 	}
-	
 	return $xtra;
 }
 
