@@ -184,14 +184,14 @@ global $mem_user_cfs;
 if( !is_array($mem_user_cfs))
 {
 	$mem_user_cfs = array(
-		#var_name	=> spec,		# REMEMBER TO ADD 'cf_<var_name>' to the $mem_self_lang array!
-		'registered' => "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'",
-		'website' => "VARCHAR(128) NOT NULL DEFAULT ''",
-		'phone' => "VARCHAR(32) NOT NULL DEFAULT ''",
-		'fax' => "VARCHAR(32) NOT NULL DEFAULT ''",
-		'iso' => "VARCHAR(8) NOT NULL DEFAULT ''",
-		'vat' => "VARCHAR(32) NOT NULL DEFAULT ''",
-		'notes'=> "TEXT NOT NULL DEFAULT ''",
+		#var_name	=> array( spec string, index type [''|'none'|'fulltext'|'unique'|'index'] ),		# REMEMBER TO ADD 'cf_<var_name>' to the $mem_self_lang array!
+		'registered'	=> array( "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'"	, 'index' ),
+		'website'		=> array( "VARCHAR(128) NOT NULL DEFAULT ''"				, 'none' ),
+		'phone'			=> array( "VARCHAR(32) NOT NULL DEFAULT ''"					, 'none'),
+		'fax'			=> array( "VARCHAR(32) NOT NULL DEFAULT ''"					, 'none'),
+		'iso'			=> array( "VARCHAR(8) NOT NULL DEFAULT ''"					, 'index' ),
+		'vat'			=> array( "VARCHAR(32) NOT NULL DEFAULT ''"					, 'none' ),
+		'notes'			=> array( "TEXT NOT NULL DEFAULT ''"						, 'fulltext' ),
 	);
 }
 
@@ -438,7 +438,18 @@ if ( @txpinterface == 'admin' ) {
 			$exists = gps('add_'.$field);
 			if($exists) {
 				if (!in_array($field,$xtra_columns)) {
-					if (safe_alter($user_table,"ADD `$field` $spec")) {
+					$sql = $spec[0];
+					switch($spec[1]) {
+						case 'index' :		$sql .= " , ADD INDEX(`$field`);";
+											break;
+						case 'fulltext'	:	$sql .= " , ADD FULLTEXT(`$field`);";
+											break;
+						case 'unique'	:	$sql .= " , ADD UNIQUE(`$field`);";
+											break;
+						default:			break;
+					}
+					
+					if (safe_alter($user_table,"ADD `$field` $sql")) {
 						$log[] = mem_self_gTxt('log_col_added', array('{name}'=>$field,'{table}'=>$user_table));
 					} else {
 						$log[] = mem_self_gTxt('log_col_failed', array('{name}'=>$field,'{table}'=>$user_table,'{error}'=>mysql_error()));
