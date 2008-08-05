@@ -1,11 +1,5 @@
 <?php
 
-// Copy this file to a new name like abc_myplugin.php.  Edit the code, then
-// run this file at the command line to produce a plugin for distribution:
-// $ php abc_myplugin.php > abc_myplugin-0.1.txt
-
-// Plugin name is optional.  If unset, it will be extracted from the current
-// file name. Uncomment and edit this line to override:
 $plugin['name'] = 'mem_self_register';
 
 $plugin['version'] = '0.9.1';
