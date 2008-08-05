@@ -262,7 +262,8 @@ function mem_self_gTxt($what,$args = array())
 {
 	global $mem_self_lang, $textarray;
 	
-	$key = strtolower( MEM_SELF_PREFIX . '-' . $what );
+	$what = strtolower($what);
+	$key = MEM_SELF_PREFIX . '-' . $what;
 	
 	if (isset($textarray[$key]))
 	{
@@ -270,12 +271,10 @@ function mem_self_gTxt($what,$args = array())
 	}
 	else
 	{
-		$key = strtolower($what);
-		
-		if (isset($mem_self_lang[$key]))
-			$str = $mem_self_lang[$key];
-		elseif (isset($textarray[$key]))
-			$str = $textarray[$key];
+		if (isset($mem_self_lang[$what]))
+			$str = $mem_self_lang[$what];
+		elseif (isset($textarray[$what]))
+			$str = $textarray[$what];
 		else
 			$str = $what;
 	}
