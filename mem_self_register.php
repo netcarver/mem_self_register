@@ -179,6 +179,8 @@ p. Example for logged in user
 ////////////////////////////////////////////////////////////
 require_plugin('mem_form');
 
+define ( 'mem_self_register_pwd_length' , 10 );
+
 // Per-User custom fields
 global $mem_user_cfs;
 if( !is_array($mem_user_cfs))
@@ -619,8 +621,7 @@ function mem_self_register_form_submit()
 
 	extract($mem_self);
 
-	$pw = generate_password(10);
-	
+	$pw = generate_password(mem_self_register_pwd_length);
 	if (!$mem_profile) $mem_profile = array();
 
 	$mem_profile['nonce'] = $nonce = md5( uniqid( rand(), true ) );
@@ -870,8 +871,7 @@ function mem_self_password_reset_form($atts,$thing='')
 		if ($nonce and $confirm === pack('H*', substr(md5($nonce), 0, 10)).$name)
 		{
 			$email = safe_field('email', 'txp_users', "name = '".doSlash($name)."'");
-			$new_pass = doSlash(generate_password(10));
-	
+			$new_pass = doSlash(generate_password(mem_self_register_pwd_length));
 			$rs = safe_update('txp_users', "pass = password(lower('$new_pass'))", "name = '".doSlash($name)."'");
 	
 			if ($rs)
@@ -955,8 +955,7 @@ function mem_self_password_reset_form_submit()
 		
 		extract($rs);
 
-		$confirm = bin2hex(pack('H*', substr(md5($nonce), 0, 10)).$name);		
-
+		$confirm = bin2hex(pack('H*', substr(md5($nonce), 0, 10)).$name);
 		$message = $mem_form_values['form_mail'];
 		
 		if (empty($message)) {
