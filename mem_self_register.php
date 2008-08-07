@@ -660,6 +660,8 @@ function mem_self_register_form_submit()
 	);
 
 	if ($rs) {
+		callback_event( 'mem_self_register_form_submit.success' );
+
 		$mem_profile['user_id'] = $rs;
 		$mem_profile['last_access'] = 0;
 
@@ -1173,6 +1175,7 @@ function mem_self_user_edit_submit()
 				"name = '{$txp_user}'");
 	
 	if ($rs) {
+		callback_event( 'mem_self_user_edit_submit.success' );
 		return mem_self_gTxt('saved_user_profile');
 	}
 	else {
