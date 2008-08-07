@@ -660,10 +660,10 @@ function mem_self_register_form_submit()
 	);
 
 	if ($rs) {
-		callback_event( 'mem_self_register_form_submit.success' );
-
 		$mem_profile['user_id'] = $rs;
 		$mem_profile['last_access'] = 0;
+
+		callback_event( 'mem_self_register_form_submit.success' );
 
 		$message = @fetch_form($mem_form_values['email_form']);
 
