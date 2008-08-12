@@ -26,7 +26,7 @@ h3. Summary
 
 p. This plugin is designed to enable community driven sites. Users will be able to register themselves for an account to access the system. This plugin is compatible with the ign_user_password plugin alternate user table. This plugin provides user side tags for generating an html form where users can edit their account information.
 
-This plugin requires the plugin mem_form "(help)":index.php?event=plugin&step=plugin_help&name=mem_form.
+This plugin requires the plugin mem_form "(help)":/index.php?event=plugin&step=plugin_help&name=mem_form.
 
 h3. Client Plug-in Tags:
 
