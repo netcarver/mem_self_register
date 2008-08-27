@@ -290,7 +290,7 @@ function mem_self_gTxt($what,$args = array())
 global $event, $levels;
 
 
-if (txpinterface == 'public' or $event != 'admin') 
+if (txpinterface == 'public' or $event != 'admin')
 {
 	if (file_exists( txpath.'/lib/txplib_admin.php' ))
 	{
@@ -320,7 +320,7 @@ if (txpinterface == 'public' or $event != 'admin')
 	
 			return selectInput($item, $levels, $var);
 		}
-	}	
+	}
 }
 
 
@@ -350,7 +350,7 @@ if ( @txpinterface == 'admin' ) {
 		include_once txpath.'/publish/taghandlers.php';
 	}
 	
-	function mem_self_register($event, $step) 
+	function mem_self_register($event, $step)
 	{
 		global $prefs , $mem_user_cfs;
 		
@@ -404,7 +404,7 @@ if ( @txpinterface == 'admin' ) {
 		}
 	}
 
-	function mem_self_register_install() 
+	function mem_self_register_install()
 	{
 		global $mem_self , $mem_user_cfs;
 
@@ -542,9 +542,9 @@ EOF;
 		
 		// create default successful registration email form
 		$form_html = <<<EOF
-Dear <txp:mem_name />, 
+Dear <txp:mem_name />,
 
-Thank you for registering at <txp:mem_siteurl />. 
+Thank you for registering at <txp:mem_siteurl />.
 
 Your login name: <txp:mem_username />
 Your password: <txp:mem_password />
@@ -754,16 +754,16 @@ function mem_get_extra_user_columns_insert_string() {
 		$type = strtolower($xcol['Type']);
 		$val = gps($name);
 		
-		if ( strstr($type,'int') 
-				|| $type=='float' 
-				|| $type=='decimal' 
-				|| $type=='double' 
+		if ( strstr($type,'int')
+				|| $type=='float'
+				|| $type=='decimal'
+				|| $type=='double'
 				|| $type=='bool' ) {
 			// don't quote value
 			if (!intval($val))
 				$val = ( $val=='yes' || $val=='on' ) ? $val = 1 : $val = 0;
 			
-			$xtra .= ", {$name}=" . ($val == false ? '0' : doSlash($val));	
+			$xtra .= ", {$name}=" . ($val == false ? '0' : doSlash($val));
 		} else {
 			// quote value
 			if('now()'===$val)
@@ -781,7 +781,7 @@ function mem_get_extra_user_columns()
 	static $default_columns = array('user_id','name','pass','RealName','email','privs','last_access','nonce');
 	static $xtra_columns = false;
 
-	if (is_array($xtra_columns)) 
+	if (is_array($xtra_columns))
 		return $xtra_columns;
 
 	$table_name = mem_get_user_table_name();
@@ -949,7 +949,7 @@ function mem_self_password_reset_form_submit()
 	
 	$rs = safe_row('name, email, nonce, RealName', mem_get_user_table_name(), join('and',$where));
 	
-	if ($rs) 
+	if ($rs)
 	{
 		$url = @$mem_form_values['confirm_url'];
 		$url = empty($url) ? hu.'textpattern/index.php' : hu.ltrim($url,'/');
@@ -1067,7 +1067,7 @@ function mem_self_password_form_submit()
 	// successful
 	$mem_profile = safe_row('*',mem_get_user_table_name(),"name = '{$user}'");
 
-	if ($mem_profile) 
+	if ($mem_profile)
 	{
 		$mem_profile['new_pass'] = $new_pass;
 		
@@ -1106,7 +1106,7 @@ function mem_self_password_form_submit()
 			return mem_self_gTxt('password_changed');
 		else
 			return mem_self_gTxt('password_changed_mail_failed');
-	} 
+	}
 	else {
 		// no email, fail silently
 	}
