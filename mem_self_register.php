@@ -644,6 +644,11 @@ function mem_self_register_form_submit()
 		elseif ($c_name==='registered')
 			$mem_profile[$c_name] = $_POST['registered'] = 'now()';
 	}
+
+	$msg = callback_event( 'mem_self_register_form_submit.verify' );
+	if ($msg) {
+		return mem_form_error($msg);
+	}
 	
 	$rs = false;
 
